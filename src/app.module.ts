@@ -1,10 +1,30 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+import typeorm from './config/typeorm';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+      load: [typeorm],
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const typeOrmConfig =
+          configService.get<TypeOrmModuleOptions>('typeorm');
+
+        if (!typeOrmConfig) {
+          throw new Error('Missing TypeORM configuration');
+        }
+        return typeOrmConfig;
+      },
+    }),
+    //...Other modules
+  ],
+  //other configs
 })
 export class AppModule {}
