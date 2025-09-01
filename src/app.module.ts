@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
 
 import typeorm from './config/typeorm';
 
@@ -23,6 +24,7 @@ import typeorm from './config/typeorm';
         return typeOrmConfig;
       },
     }),
+    UsersModule,
     //...Other modules
   ],
   //other configs
